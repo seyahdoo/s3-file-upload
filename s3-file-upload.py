@@ -8,6 +8,11 @@ from sys import exit
 from os.path import normpath
 from pathlib import PureWindowsPath
 from pathlib import Path
+import posixpath
+import string
+import secrets
+
+KEY_LENGTH = 32
 
 def main():
     parser = argparse.ArgumentParser(description='upload file to aws s3 bucket')
@@ -31,17 +36,23 @@ def main():
     
     if not Path(source).exists():
         print("source file not found", file=sys.stderr)
-        os.exit(1)
-        return 
-    
+        sys.exit(1)
+        return
+
+    key = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(KEY_LENGTH))
     file_name = os.path.basename(source)
-    s3_path = os.path.join(destination, file_name)
+    s3_path = posixpath.join(destination, key, file_name)
     
     print(f"uploading {s3_path}...")
     client.upload_file(source, bucket, s3_path)
+
+    url = f"https://{bucket}.s3.{aws_region}.amazonaws.com/{s3_path}";
+    print(f"file url: {url}")
+
+    # f"https://unity-builds-2026.s3.eu-central-1.amazonaws.com/tests/test.txt"
     
     print("done")
-    os.exit(0)
+    sys.exit(0)
 
 if __name__ == '__main__':
     main()
