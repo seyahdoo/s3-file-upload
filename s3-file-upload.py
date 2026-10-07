@@ -46,8 +46,6 @@ def main():
     url = f"https://{bucket}.s3.{aws_region}.amazonaws.com/{s3_path}";
     print(f"file url: {url}")
 
-    # f"https://unity-builds-2026.s3.eu-central-1.amazonaws.com/tests/test.txt"
-
     print("done")
     sys.exit(0)
     return
